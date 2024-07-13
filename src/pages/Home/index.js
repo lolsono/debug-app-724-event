@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import EventCard from "../../components/EventCard";
 import PeopleCard from "../../components/PeopleCard";
 import ServiceCard from "../../components/ServiceCard";
@@ -13,11 +14,18 @@ import { useData } from "../../contexts/DataContext";
 import "./style.scss";
 
 const Page = () => {
-  // récuperation du tableaux avec les valeur
+  // récupération du tableau avec les valeurs
   const { data } = useData();
 
-  // creation de la valeur last qui sera le dernier evenement de data.event
-  const last = data.events[data.events.length - 1];
+  // création de l'état last qui sera le dernier événement de data.event
+  const [last, setLast] = useState(null);
+
+  // utilisation de useEffect pour mettre à jour last lorsque data change
+  useEffect(() => {
+    if (data) {
+      setLast(data.events[data.events.length - 1]);
+    }
+  }, [data]);
 
   return (
     <>
