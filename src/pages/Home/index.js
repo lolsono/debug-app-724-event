@@ -16,14 +16,25 @@ import "./style.scss";
 const Page = () => {
   // récupération du tableau avec les valeurs
   const { data } = useData();
+  // console.log(data.events);
 
   // création de l'état last qui sera le dernier événement de data.event
   const [last, setLast] = useState(null);
 
   // utilisation de useEffect pour mettre à jour last lorsque data change
+
   useEffect(() => {
-    if (data) {
-      setLast(data.events[data.events.length - 1]);
+    if (data && data.events) {
+      // Trier les événements par date (du plus récent au plus ancien)
+      const sortedEvents = data.events.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
+
+      // Mettre à jour l'état lastEvent avec le premier événement trié (le plus récent)
+      setLast(sortedEvents[0]);
+
+      // Afficher la date du premier événement trié (le plus récent) dans la console
+      // console.log("Date du dernier événement :", sortedEvents[0].date);
     }
   }, [data]);
 
