@@ -7,28 +7,29 @@ import "./style.scss";
 const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
-
-  // système de trie par la date la plus récente pour les events
-  // retourne un tableaux trier par odre décroissants
   const byDateDesc = data?.focus.sort((evtA, evtB) =>
-    new Date(evtA.date) < new Date(evtB.date) ? -1 : 1
+    // changement de sens du trie du dans l'ordre décroisant
+    new Date(evtB.date) < new Date(evtA.date) ? 1 : -1
   );
-
-  // système de roulement quand on arriver a la dernière carde on recommence
   const nextCard = () => {
-    setTimeout(() => setIndex(index < byDateDesc.length ? index + 1 : 0), 5000);
+    if (byDateDesc !== undefined) {
+      setTimeout(
+        // index inferieur a la taille de mon tableau.
+        // ajout de - 1 à byDateDesc.length pour éviter l'erreur de débordement.
+        () => setIndex(index < byDateDesc.length - 1 ? index + 1 : 0),
+        5000
+      );
+    }
   };
-
   useEffect(() => {
     nextCard();
   });
-
   return (
     <div className="SlideCardList">
       {byDateDesc?.map((event, idx) => (
-        <>
+        // déplacer ma key props dans la div du dessus
+        <div key={event.title}>
           <div
-            key={event.title}
             className={`SlideCard SlideCard--${
               index === idx ? "display" : "hide"
             }`}
@@ -44,19 +45,19 @@ const Slider = () => {
           </div>
           <div className="SlideCard__paginationContainer">
             <div className="SlideCard__pagination">
-              {byDateDesc.map((eventitem, radioIdx) => (
+              {byDateDesc.map((_, radioIdx) => (
                 <input
-                  key={eventitem.id} // Utilise un identifiant unique provenant des données
+                  key={`${_.title}`}
                   type="radio"
-                  name="slider"
-                  value={radioIdx}
+                  name="radio-button"
                   checked={index === radioIdx}
-                  onChange={() => setIndex(radioIdx)} // Ajoute un gestionnaire onChange
+                  // ajout readOnly un attribut booléen, pour empêcher un utilisateur de modifier la valeur.
+                  readOnly
                 />
               ))}
             </div>
           </div>
-        </>
+        </div>
       ))}
     </div>
   );
