@@ -7,12 +7,18 @@ import "./style.scss";
 const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
+
+  // système de trie par la date la plus récente pour les events
+  // retourne un tableaux trier par odre décroissants
   const byDateDesc = data?.focus.sort((evtA, evtB) =>
     new Date(evtA.date) < new Date(evtB.date) ? -1 : 1
   );
+
+  // système de roulement quand on arriver a la dernière carde on recommence
   const nextCard = () => {
     setTimeout(() => setIndex(index < byDateDesc.length ? index + 1 : 0), 5000);
   };
+
   useEffect(() => {
     nextCard();
   });
@@ -38,12 +44,14 @@ const Slider = () => {
           </div>
           <div className="SlideCard__paginationContainer">
             <div className="SlideCard__pagination">
-              {byDateDesc.map((_, radioIdx) => (
+              {byDateDesc.map((eventitem, radioIdx) => (
                 <input
-                  key={`${_.title}`}
+                  key={eventitem.id} // Utilise un identifiant unique provenant des données
                   type="radio"
-                  name="radio-button"
-                  checked={idx === radioIdx}
+                  name="slider"
+                  value={radioIdx}
+                  checked={index === radioIdx}
+                  onChange={() => setIndex(radioIdx)} // Ajoute un gestionnaire onChange
                 />
               ))}
             </div>
